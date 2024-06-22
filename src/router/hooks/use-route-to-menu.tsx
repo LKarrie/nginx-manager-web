@@ -1,4 +1,4 @@
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ItemType } from 'antd/es/menu/interface';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 

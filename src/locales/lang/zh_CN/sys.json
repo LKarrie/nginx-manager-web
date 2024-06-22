@@ -49,6 +49,7 @@
       "sendEmailButton": "发送邮件",
 
       "loginSuccessTitle": "登录成功",
+      "loginFailTitle": "登录失败",
       "loginSuccessDesc": "欢迎回来",
 
       "accountPlaceholder": "请输入账号",

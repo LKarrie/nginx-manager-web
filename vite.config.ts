@@ -1,4 +1,4 @@
-import { Agent } from 'https';
+// import { Agent } from 'https';
 import path from 'path';
 
 import react from '@vitejs/plugin-react';
@@ -37,12 +37,14 @@ export default defineConfig({
     host: true,
     port: 3001,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+      '/v1': {
+        target: 'http://localhost:8080',
+        // changeOrigin: true,
+        // 没必要换
+        // rewrite: (path) => path.replace(/^\/api/, ''),
+        // 代理后端https时候用
         // https://github.com/vitejs/vite/discussions/8998#discussioncomment-4408695
-        agent: new Agent({ keepAlive: true, keepAliveMsecs: 20000 }),
+        // agent: new Agent({ keepAlive: true, keepAliveMsecs: 20000 }),
       },
     },
   },

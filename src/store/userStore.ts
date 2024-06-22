@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { App } from 'antd';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { create } from 'zustand';
@@ -46,7 +46,6 @@ const useUserStore = create<UserStore>((set) => ({
 
 export const useUserInfo = () => useUserStore((state) => state.userInfo);
 export const useUserToken = () => useUserStore((state) => state.userToken);
-export const useUserPermission = () => useUserStore((state) => state.userInfo.permissions);
 export const useUserActions = () => useUserStore((state) => state.actions);
 
 export const useSignIn = () => {
@@ -57,24 +56,43 @@ export const useSignIn = () => {
 
   const signInMutation = useMutation(userService.signin);
 
+  const loginSuccess = useRef(true);
+
   const signIn = async (data: SignInReq) => {
     try {
       const res = await signInMutation.mutateAsync(data);
-      const { user, accessToken, refreshToken } = res;
-      setUserToken({ accessToken, refreshToken });
+      const {
+        user,
+        accessToken,
+        refreshToken,
+        sessionId,
+        accessTokenExpiresAt,
+        refresTokenExpiresAt,
+      } = res;
+      setUserToken({
+        accessToken,
+        refreshToken,
+        sessionId,
+        accessTokenExpiresAt,
+        refresTokenExpiresAt,
+      });
       setUserInfo(user);
       navigatge(HOMEPAGE, { replace: true });
     } catch (err) {
+      console.log(err.message);
       message.warning({
         content: err.message,
         duration: 3,
       });
+      loginSuccess.current = false;
     } finally {
-      notification.success({
-        message: t('sys.login.loginSuccessTitle'),
-        description: `${t('sys.login.loginSuccessDesc')}: ${data.username}`,
-        duration: 3,
-      });
+      if (loginSuccess.current) {
+        notification.success({
+          message: t('sys.login.loginSuccessTitle'),
+          description: `${t('sys.login.loginSuccessDesc')}: ${data.username}`,
+          duration: 3,
+        });
+      }
     }
   };
 

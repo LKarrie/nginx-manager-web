@@ -17,7 +17,9 @@ const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
  */
 export default function AccountDropdown() {
   const { replace } = useRouter();
-  const { username, email, avatar } = useUserInfo();
+  // const { username, email, avatar } = useUserInfo();
+  const { username, email } = useUserInfo();
+  const avatar = '/avatar.webp';
   const { clearUserInfoAndToken } = useUserActions();
   const { backToLogin } = useLoginStateContext();
   const { t } = useTranslation();

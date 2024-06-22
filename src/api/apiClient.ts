@@ -1,11 +1,8 @@
-import { message as Message } from 'antd';
+import { notification } from 'antd';
 import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { isEmpty } from 'ramda';
 
 import { t } from '@/locales/i18n';
-
-import { Result } from '#/api';
-import { ResultEnum } from '#/enum';
 
 // 创建 axios 实例
 const axiosInstance = axios.create({
@@ -29,24 +26,28 @@ axiosInstance.interceptors.request.use(
 
 // 响应拦截
 axiosInstance.interceptors.response.use(
-  (res: AxiosResponse<Result>) => {
-    if (!res.data) throw new Error(t('sys.api.apiRequestFailed'));
-
-    const { status, data, message } = res.data;
-    // 业务请求成功
-    const hasSuccess = data && Reflect.has(res.data, 'status') && status === ResultEnum.SUCCESS;
-    if (hasSuccess) {
-      return data;
-    }
-
-    // 业务请求错误
-    throw new Error(message || t('sys.api.apiRequestFailed'));
+  // 业务报错也返回 非200请求状态码
+  (res: AxiosResponse<any>) => {
+    return res.data;
   },
-  (error: AxiosError<Result>) => {
-    const { response, message } = error || {};
+  // (res: AxiosResponse<Result>) => {
+  //   if (!res.data) throw new Error(t('sys.api.apiRequestFailed'));
+
+  //   const { status, data, message } = res.data;
+  //   // 业务请求成功
+  //   const hasSuccess = data && Reflect.has(res.data, 'status') && status === ResultEnum.SUCCESS;
+  //   if (hasSuccess) {
+  //     return data;
+  //   }
+
+  //   // 业务请求错误
+  //   throw new Error(message || t('sys.api.apiRequestFailed'));
+  // },
+  (error: AxiosError<any>) => {
+    const { message } = error || {};
     let errMsg = '';
     try {
-      errMsg = response?.data?.message || message;
+      errMsg = message;
     } catch (error) {
       throw new Error(error as unknown as string);
     }
@@ -56,7 +57,13 @@ axiosInstance.interceptors.response.use(
       // errMsg = checkStatus(response.data.status);
       errMsg = t('sys.api.errorMessage');
     }
-    Message.error(errMsg);
+    // 改成 notification
+    // Message.error(errMsg);
+    notification.error({
+      message: t('sys.login.loginFailTitle'),
+      description: errMsg,
+      duration: 3,
+    });
     return Promise.reject(error);
   },
 );
@@ -81,8 +88,8 @@ class APIClient {
   request<T = any>(config: AxiosRequestConfig): Promise<T> {
     return new Promise((resolve, reject) => {
       axiosInstance
-        .request<any, AxiosResponse<Result>>(config)
-        .then((res: AxiosResponse<Result>) => {
+        .request<any, AxiosResponse<any>>(config)
+        .then((res: AxiosResponse<any>) => {
           resolve(res as unknown as Promise<T>);
         })
         .catch((e: Error | AxiosError) => {

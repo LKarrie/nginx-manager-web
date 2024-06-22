@@ -50,6 +50,7 @@
       "sendEmailButton": "Send Email",
 
       "loginSuccessTitle": "Login successful",
+      "loginFailTitle": "Login failed",
       "loginSuccessDesc": "Welcome back",
 
       "accountPlaceholder": "Please input username",

@@ -21,3 +21,4 @@ Dockerfile
 pnpm-lock.yaml
 tsconfig.node.json
 /src/_mock
+main.tsx

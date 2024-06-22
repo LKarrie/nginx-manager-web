@@ -16,7 +16,7 @@ type FieldType = {
 };
 export default function GeneralTab() {
   const { notification } = App.useApp();
-  const { avatar, username, email } = useUserInfo();
+  const { username, email } = useUserInfo();
   const initFormValues = {
     name: username,
     email,
@@ -36,7 +36,7 @@ export default function GeneralTab() {
     <Row gutter={[16, 16]}>
       <Col span={24} lg={8}>
         <Card className="flex-col !px-6 !pb-10 !pt-20">
-          <UploadAvatar defaultAvatar={avatar} />
+          <UploadAvatar defaultAvatar="/404.webp" />
 
           <Space className="py-6">
             <div>Public Profile</div>
